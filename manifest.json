@@ -1,0 +1,9 @@
+{
+  "name": "TradeCalc-Pro",
+  "short_name": "TradeCalc",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07100c",
+  "theme_color": "#b6ff4a"
+}
