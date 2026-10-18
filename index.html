@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GURUKRUPATECH | TRADER-$HIV</title>
+<style>
+:root{--bg:#080b09;--panel:#111713;--line:#2b3a2d;--green:#b6ff4a;--gold:#e6bd68;--text:#f4f7f2;--muted:#9ca99d;--red:#ff6b72}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#1b2b1d,#080b09 68%);color:var(--text);font-family:Arial,sans-serif}
+header{text-align:center;padding:23px 12px 18px;border-bottom:1px solid var(--line)}
+.logo{color:var(--gold);font-size:12px;font-weight:bold;letter-spacing:4px}
+h1{font-size:25px;margin:10px 0 5px;letter-spacing:1px}
+h1 span{color:var(--green)}
+header p{font-size:11px;color:var(--muted);margin:0}
+.wrap{max-width:850px;margin:auto;padding:14px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat,.card{background:linear-gradient(145deg,#141b16,#0d120f);border:1px solid var(--line);border-radius:14px;padding:13px}
+.stat small,.result small{display:block;color:var(--muted);font-size:10px;margin-bottom:7px}
+.stat strong{font-size:15px;color:var(--green);overflow-wrap:anywhere}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:3px 0 13px}
+.tab{white-space:nowrap;border:1px solid var(--line);background:#101611;color:#c4cec4;padding:11px 12px;border-radius:9px;font-weight:bold}
+.tab.active{background:var(--green);color:#11170c}
+.tool{display:none}.tool.show{display:block}
+.card{margin-bottom:13px}
+h2{font-size:15px;color:var(--gold);margin:0 0 15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
+input,select{width:100%;min-width:0;padding:12px 9px;background:#080d09;color:var(--text);border:1px solid #304033;border-radius:9px;font-size:14px}
+input:focus,select:focus{outline:1px solid var(--green)}
+button{cursor:pointer}
+.primary{width:100%;padding:14px;margin-top:14px;background:var(--green);color:#10170b;border:0;border-radius:10px;font-weight:bold;font-size:14px}
+.secondary{padding:12px;background:#202a22;color:var(--text);border:1px solid var(--line);border-radius:9px}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:13px}
+.result{min-width:0;padding:12px;background:#0a100b;border:1px solid #26372a;border-radius:10px}
+.result strong{font-size:16px;overflow-wrap:anywhere}
+.green{color:var(--green)}.red{color:var(--red)}.gold{color:var(--gold)}
+.note{font-size:11px;line-height:1.6;color:var(--muted);margin-top:12px}
+.calc-display{background:#080d09;border:1px solid var(--line);border-radius:12px;padding:17px;margin-bottom:12px;text-align:right}
+.calc-display small{color:var(--muted);display:block;font-size:11px;margin-bottom:8px}
+#basicDisplay{font-size:27px;color:var(--green);overflow-wrap:anywhere}
+.keypad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.key{padding:16px 2px;background:#1a231b;color:var(--text);border:1px solid var(--line);border-radius:10px;font-size:17px;font-weight:bold}
+.key.op{color:var(--gold)}
+.key.equal{background:var(--green);color:#10170b}
+footer{text-align:center;padding:22px;color:var(--muted);font-size:10px;letter-spacing:2px}
+@media(min-width:600px){.wrap{padding:22px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}h1{font-size:30px}}
+@media(max-width:360px){.wrap{padding:9px}.stat{padding:9px}.stat strong{font-size:13px}.grid{gap:8px}.key{padding:14px 2px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">GURUKRUPATECH</div>
+<h1>TRADER-<span>$HIV</span></h1>
+<p>ALL-IN-ONE TRADING & MATH CALCULATOR</p>
+</header>
+<main class="wrap">
+<div class="stats">
+<div class="stat"><small>ACCOUNT CAPITAL</small><strong id="capitalTop">₹10,000</strong></div>
+<div class="stat"><small>PLANNED RISK</small><strong id="riskTop">₹100</strong></div>
+<div class="stat"><small>RISK : REWARD</small><strong id="rrTop">1 : 2</strong></div>
+</div>
+<nav class="tabs">
+<button class="tab active" data-tab="trade">Trade</button>
+<button class="tab" data-tab="risk">Risk Manager</button>
+<button class="tab" data-tab="average">Averaging</button>
+<button class="tab" data-tab="break">Breakeven</button>
+<button class="tab" data-tab="math">Math Tools</button>
+<button class="tab" data-tab="basic">Calculator</button>
+</nav>
+
+<section id="trade" class="tool show">
+<div class="card">
+<h2>01 / TRADE CALCULATOR</h2>
+<div class="grid">
+<div><label>Market</label><select id="market"><option>Indian Stocks</option><option>Options / F&O</option><option>Forex</option><option>Crypto</option><option>Commodities</option><option>Indices</option></select></div>
+<div><label>Direction</label><select id="side"><option value="long">BUY / LONG</option><option value="short">SELL / SHORT</option></select></div>
+<div><label>Capital (₹)</label><input id="capital" type="number" value="10000" min="0"></div>
+<div><label>Risk per Trade (%)</label><input id="riskPct" type="number" value="1" min="0" step="any"></div>
+<div><label>Entry Price</label><input id="entry" type="number" value="100" min="0" step="any"></div>
+<div><label>Stop Loss</label><input id="sl" type="number" value="98" min="0" step="any"></div>
+<div><label>Target Price</label><input id="tp" type="number" value="104" min="0" step="any"></div>
+<div><label>Quantity / Units</label><input id="qty" type="number" value="50" min="0" step="any"></div>
+<div><label>Lot Size</label><input id="lot" type="number" value="1" min="1" step="1"></div>
+<div><label>Total Charges</label><input id="charges" type="number" value="0" min="0" step="any"></div>
+<div><label>Currency</label><select id="currency"><option value="INR">INR ₹</option><option value="USD">USD $</option><option value="EUR">EUR €</option></select></div>
+<div><label>Quantity Mode</label><select id="quantityMode"><option value="manual">Use entered quantity</option><option value="risk">Use risk-based quantity</option></select></div>
+</div>
+<button class="primary" id="calculate">CALCULATE TRADE ↗</button>
+<div class="results">
+<div class="result"><small>POSITION VALUE</small><strong id="position">₹5,000</strong></div>
+<div class="result"><small>LOSS AT STOP + CHARGES</small><strong id="loss" class="red">₹100</strong></div>
+<div class="result"><small>GROSS TARGET PROFIT</small><strong id="profit" class="green">₹200</strong></div>
+<div class="result"><small>NET TARGET PROFIT</small><strong id="net" class="green">₹200</strong></div>
+<div class="result"><small>RISK : REWARD</small><strong id="rr" class="gold">1 : 2</strong></div>
+<div class="result"><small>RISK-BASED QUANTITY</small><strong id="riskQty">50</strong></div>
+<div class="result"><small>STOP DISTANCE</small><strong id="distance">2</strong></div>
+<div class="result"><small>BREAKEVEN INCLUDING CHARGES</small><strong id="be">100</strong></div>
+<div class="result"><small>ACTUAL PRICE RISK %</small><strong id="actualRisk">1%</strong></div>
+</div>
+<p class="note">Estimates only. Brokerage, taxes, slippage, lot multipliers, margin and contract rules differ by broker and market. Verify before placing a real trade.</p>
+</div>
+</section>
+
+<section id="risk" class="tool">
+<div class="card">
+<h2>02 / RISK MANAGER</h2>
+<div class="grid">
+<div><label>Capital</label><input id="rCapital" type="number" value="10000"></div>
+<div><label>Risk %</label><input id="rPercent" type="number" value="1" step="any"></div>
+<div><label>Entry</label><input id="rEntry" type="number" value="500"></div>
+<div><label>Stop Loss</label><input id="rSL" type="number" value="495"></div>
+<div><label>Target</label><input id="rTP" type="number" value="510"></div>
+</div>
+<button class="primary" id="riskCalc">CALCULATE POSITION SIZE</button>
+<div class="results">
+<div class="result"><small>PLANNED RISK</small><strong id="rMoney">₹100</strong></div>
+<div class="result"><small>QUANTITY</small><strong id="rQty">20</strong></div>
+<div class="result"><small>POSITION VALUE</small><strong id="rValue">₹10,000</strong></div>
+<div class="result"><small>TARGET PROFIT</small><strong id="rProfit">₹200</strong></div>
+</div>
+<p class="note">Rounded down to whole units. Gaps and slippage may cause losses beyond planned risk.</p>
+</div>
+</section>
+
+<section id="average" class="tool">
+<div class="card">
+<h2>03 / AVERAGING CALCULATOR</h2>
+<div class="grid">
+<div><label>First Buy Price</label><input id="aP1" type="number" value="100"></div>
+<div><label>First Quantity</label><input id="aQ1" type="number" value="10"></div>
+<div><label>Second Buy Price</label><input id="aP2" type="number" value="90"></div>
+<div><label>Second Quantity</label><input id="aQ2" type="number" value="10"></div>
+<div><label>Current Price</label><input id="aNow" type="number" value="95"></div>
+</div>
+<button class="primary" id="avgCalc">CALCULATE AVERAGE</button>
+<div class="results">
+<div class="result"><small>AVERAGE PRICE</small><strong id="avgPrice">₹95</strong></div>
+<div class="result"><small>TOTAL QUANTITY</small><strong id="avgQty">20</strong></div>
+<div class="result"><small>TOTAL COST</small><strong id="avgCost">₹1,900</strong></div>
+<div class="result"><small>UNREALIZED P/L</small><strong id="avgPL">₹0</strong></div>
+</div>
+<p class="note">Averaging increases exposure. It does not guarantee recovery.</p>
+</div>
+</section>
+
+<section id="break" class="tool">
+<div class="card">
+<h2>04 / BREAKEVEN CALCULATOR</h2>
+<div class="grid">
+<div><label>Entry Price</label><input id="bEntry" type="number" value="100"></div>
+<div><label>Quantity</label><input id="bQty" type="number" value="10"></div>
+<div><label>Total Charges</label><input id="bFees" type="number" value="10"></div>
+<div><label>Direction</label><select id="bSide"><option value="long">Long / Buy</option><option value="short">Short / Sell</option></select></div>
+</div>
+<button class="primary" id="beCalc">FIND BREAKEVEN</button>
+<div class="results">
+<div class="result"><small>BREAKEVEN PRICE</small><strong id="bPrice">₹101</strong></div>
+<div class="result"><small>CHARGES PER UNIT</small><strong id="bUnit">₹1</strong></div>
+</div>
+</div>
+</section>
+
+<section id="math" class="tool">
+<div class="card">
+<h2>05 / SMART MATH TOOLS</h2>
+<div class="grid">
+<div><label>Number A</label><input id="mA" type="number" value="100" step="any"></div>
+<div><label>Number B</label><input id="mB" type="number" value="5" step="any"></div>
+<div><label>Operation</label><select id="mOp">
+<option value="add">Addition (+)</option>
+<option value="sub">Subtraction (−)</option>
+<option value="mul">Multiplication (×)</option>
+<option value="div">Division (÷)</option>
+<option value="percent">B is what % of A?</option>
+<option value="of">A चा B% काढा</option>
+<option value="increase">A मध्ये B% वाढवा</option>
+<option value="decrease">A मधून B% कमी करा</option>
+</select></div>
+</div>
+<button class="primary" id="mathCalc">CALCULATE ✦</button>
+<div class="results">
+<div class="result"><small>CALCULATION</small><strong id="mathFormula">100 + 5</strong></div>
+<div class="result"><small>ANSWER</small><strong id="mathResult" class="green">105</strong></div>
+</div>
+<p class="note">उदाहरण: 200 चा 15% = 30. 200 मध्ये 15% वाढवल्यास = 230.</p>
+</div>
+</section>
+
+<section id="basic" class="tool">
+<div class="card">
+<h2>06 / BASIC CALCULATOR</h2>
+<div class="calc-display"><small id="basicExpression">Ready</small><div id="basicDisplay">0</div></div>
+<div class="keypad">
+<button class="key" data-key="clear">AC</button>
+<button class="key" data-key="back">⌫</button>
+<button class="key op" data-key="%">%</button>
+<button class="key op" data-key="/">÷</button>
+<button class="key" data-key="7">7</button>
+<button class="key" data-key="8">8</button>
+<button class="key" data-key="9">9</button>
+<button class="key op" data-key="*">×</button>
+<button class="key" data-key="4">4</button>
+<button class="key" data-key="5">5</button>
+<button class="key" data-key="6">6</button>
+<button class="key op" data-key="-">−</button>
+<button class="key" data-key="1">1</button>
+<button class="key" data-key="2">2</button>
+<button class="key" data-key="3">3</button>
+<button class="key op" data-key="+">+</button>
+<button class="key" data-key="00">00</button>
+<button class="key" data-key="0">0</button>
+<button class="key" data-key=".">.</button>
+<button class="key equal" data-key="=">=</button>
+</div>
+<p class="note">Basic calculator supports +, −, ×, ÷ and percentage. Division by zero is not allowed.</p>
+</div>
+</section>
+<p class="note">Educational calculator only. No live market data or profit guarantee.</p>
+</main>
+<footer>CREATE BY TRADER-$HIV · GURUKRUPATECH</footer>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const n=id=>Number($(id).value);
+const fmt=(x,c="INR")=>{
+ if(!Number.isFinite(x))return "—";
+ try{return new Intl.NumberFormat("en-IN",{style:"currency",currency:c,maximumFractionDigits:2}).format(x)}
+ catch(e){return x.toFixed(2)}
+};
+const put=(id,v)=>$(id).textContent=v;
+
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));
+ document.querySelectorAll(".tool").forEach(s=>s.classList.toggle("show",s.id===btn.dataset.tab));
+}));
+
+function calculateTrade(){
+ const c=n("capital"),rp=n("riskPct"),e=n("entry"),s=n("sl"),t=n("tp");
+ let q=n("qty");const lot=Math.max(1,Math.floor(n("lot")||1));
+ const fees=Math.max(0,n("charges")),cur=$("currency").value,side=$("side").value;
+ if(![c,rp,e,s,t,q,fees].every(Number.isFinite)||c<0||rp<0||e<=0||s<0||t<0||q<0||fees<0){return}
+ const risk=c*rp/100,dist=Math.abs(e-s),reward=Math.abs(t-e);
+ const suggested=dist>0?Math.floor((risk/dist)/lot)*lot:0;
+ if($("quantityMode").value==="risk")q=suggested;
+ const loss=dist*q,profit=reward*q,net=(side==="long"?t-e:e-t)*q-fees;
+ const correct=side==="long"?(s<e&&t>e):(s>e&&t<e);
+ put("capitalTop",fmt(c,cur));put("riskTop",fmt(risk,cur));
+ put("rrTop",dist>0?"1 : "+(reward/dist).toFixed(2):"—");
+ put("position",fmt(e*q,cur));put("loss",fmt(loss+fees,cur));
+ put("profit",fmt(profit,cur));put("net",fmt(net,cur));
+ $("net").className=net>=0?"green":"red";
+ put("rr",dist>0?"1 : "+(reward/dist).toFixed(2):"—");
+ $("rr").className=correct?"gold":"red";
+ put("riskQty",suggested+" units");put("distance",fmt(dist,cur));
+ put("be",fmt(e+(side==="long"?1:-1)*(q?fees/q:0),cur));
+ put("actualRisk",c>0?(loss/c*100).toFixed(2)+"%":"—");
+}
+function riskCalc(){
+ const c=n("rCapital"),p=n("rPercent"),e=n("rEntry"),s=n("rSL"),t=n("rTP");
+ if(![c,p,e,s,t].every(Number.isFinite)||c<0||p<0||e<=0||s<0||t<0||e===s){alert("योग्य values भरा. Entry आणि SL वेगळे असावेत.");return}
+ const risk=c*p/100,q=Math.floor(risk/Math.abs(e-s));
+ put("rMoney",fmt(risk));put("rQty",q+" units");put("rValue",fmt(q*e));put("rProfit",fmt(q*Math.abs(t-e)));
+}
+function avgCalc(){
+ const p1=n("aP1"),q1=n("aQ1"),p2=n("aP2"),q2=n("aQ2"),now=n("aNow");
+ if(![p1,q1,p2,q2,now].every(Number.isFinite)||p1<0||p2<0||q1<0||q2<0){alert("योग्य values भरा.");return}
+ const q=q1+q2,cost=p1*q1+p2*q2,avg=q?cost/q:0,pl=now*q-cost;
+ put("avgPrice",fmt(avg));put("avgQty",q);put("avgCost",fmt(cost));put("avgPL",fmt(pl));$("avgPL").className=pl>=0?"green":"red";
+}
+function beCalc(){
+ const e=n("bEntry"),q=n("bQty"),f=n("bFees"),side=$("bSide").value;
+ if(![e,q,f].every(Number.isFinite)||e<=0||q<=0||f<0){alert("योग्य Entry, Quantity आणि Charges भरा.");return}
+ put("bPrice",fmt(e+(side==="long"?1:-1)*f/q));put("bUnit",fmt(f/q));
+}
+function mathCalc(){
+ const av=$("mA").value,bv=$("mB").value,a=Number(av),b=Number(bv),op=$("mOp").value;
+ if(av.trim()===""||bv.trim()===""||![a,b].every(Number.isFinite)){alert("दोन्ही numbers भरा.");return}
+ let r,formula;
+ switch(op){
+  case "add":r=a+b;formula=`${a} + ${b}`;break;
+  case "sub":r=a-b;formula=`${a} − ${b}`;break;
+  case "mul":r=a*b;formula=`${a} × ${b}`;break;
+  case "div":r=b!==0?a/b:NaN;formula=`${a} ÷ ${b}`;break;
+  case "percent":r=a!==0?b/a*100:NaN;formula=`${b} ÷ ${a} × 100`;break;
+  case "of":r=a*b/100;formula=`${b}% of ${a}`;break;
+  case "increase":r=a*(1+b/100);formula=`${a} + ${b}%`;break;
+  case "decrease":r=a*(1-b/100);formula=`${a} − ${b}%`;break;
+  default:r=NaN;formula="Invalid";
+ }
+ put("mathFormula",formula);
+ put("mathResult",Number.isFinite(r)?r.toLocaleString("en-IN",{maximumFractionDigits:8}):"Cannot calculate");
+ $("mathResult").className=Number.isFinite(r)?"green":"red";
+}
+
+let expression="",fresh=true;
+function drawBasic(){
+ put("basicExpression",expression||"Ready");
+ put("basicDisplay",expression||"0");
+}
+function basicPress(key){
+ if(key==="clear"){expression="";fresh=true;drawBasic();return}
+ if(key==="back"){expression=expression.slice(0,-1);drawBasic();return}
+ if(key==="="){
+  if(!expression)return;
+  try{
+   if(!/^[0-9+\-*/%.() ]+$/.test(expression))throw Error();
+   let safe=expression.replace(/(\d+(?:\.\d+)?)%/g,"($1/100)");
+   if(!safe.trim()||/\/\s*0(?:\.0*)?(?![\d.])/.test(safe))throw Error();
+   const result=Function('"use strict";return ('+safe+')')();
+   if(!Number.isFinite(result))throw Error();
+   expression=String(Number(result.toPrecision(12)));fresh=true;
+   put("basicExpression","Answer");put("basicDisplay",expression);return;
+  }catch(e){put("basicExpression","Invalid calculation");put("basicDisplay","Error");expression="";fresh=true;return}
+ }
+ if(fresh&&/[0-9.]/.test(key)&&!/[+\-*/%]/.test(key)){expression="";fresh=false}
+ else if(/[+\-*/%]/.test(key))fresh=false;
+ if(key==="."&&expression.split(/[+\-*/%]/).pop().includes("."))return;
+ expression+=key;drawBasic();
+}
+document.querySelectorAll("[data-key]").forEach(btn=>btn.addEventListener("click",()=>basicPress(btn.dataset.key)));
+$("calculate").addEventListener("click",calculateTrade);
+$("riskCalc").addEventListener("click",riskCalc);
+$("avgCalc").addEventListener("click",avgCalc);
+$("beCalc").addEventListener("click",beCalc);
+$("mathCalc").addEventListener("click",mathCalc);
+["capital","riskPct","entry","sl","tp","qty","lot","charges","side","currency","quantityMode"].forEach(id=>$(id).addEventListener("change",calculateTrade));
+calculateTrade();riskCalc();avgCalc();beCalc();mathCalc();drawBasic();
+</script>
+</body>
+</html>
