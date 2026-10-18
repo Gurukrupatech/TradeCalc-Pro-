@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d16">
+<title>TRADECALC PRO</title>
+<style>
+:root{color-scheme:dark;--bg:#080d16;--card:#111c2b;--line:#293c51;--cyan:#45e4f2;--green:#35df9a;--red:#ff7185;--muted:#9aafc4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#eff7ff;font:15px system-ui}
+header{padding:20px 15px;background:#0d1725;border-bottom:1px solid var(--line)}
+.brand{color:var(--cyan);letter-spacing:3px;font-size:11px;font-weight:bold}
+h1{font-size:25px;margin:5px 0}
+small,.note{color:var(--muted)}
+main{max-width:700px;margin:auto;padding:12px}
+nav{display:flex;gap:7px;overflow:auto;margin-bottom:12px}
+button,select,input{font:inherit}
+nav button,.secondary{white-space:nowrap;background:#122033;color:#b9d2e7;border:1px solid var(--line);padding:10px;border-radius:9px}
+nav button.active{color:var(--cyan);border-color:var(--cyan)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+h2{font-size:17px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+input,select{width:100%;min-width:0;background:#080f19;color:white;border:1px solid #344960;border-radius:9px;padding:12px}
+.primary{width:100%;padding:13px;margin-top:12px;border:0;border-radius:10px;background:var(--cyan);color:#06141a;font-weight:bold}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.result{background:#09121e;border:1px solid var(--line);border-radius:9px;padding:10px;overflow-wrap:anywhere}
+.result span{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
+.result strong{font-size:15px}
+.green{color:var(--green)}.red{color:var(--red)}.cyan{color:var(--cyan)}
+.note{font-size:12px;line-height:1.5}
+.page[hidden]{display:none}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}
+.keys button{padding:12px 3px;background:#122033;color:var(--cyan);border:1px solid var(--line);border-radius:8px}
+footer{text-align:center;color:var(--muted);padding:20px;font-size:11px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">GURUKRUPATECH</div>
+ <h1>TRADECALC <span style="color:var(--cyan)">PRO 🧮</span></h1>
+ <small>Trading • Risk Management • Smart Calculator</small>
+</header>
+<main>
+<nav id="nav">
+<button class="active" data-tab="trade">Trade Plan</button>
+<button data-tab="size">Position Size</button>
+<button data-tab="rr">Risk:Reward</button>
+<button data-tab="pnl">Profit/Loss</button>
+<button data-tab="avg">Average</button>
+<button data-tab="math">Math</button>
+</nav>
+
+<section class="page" id="trade">
+<div class="card">
+<h2>⚙️ Market</h2>
+<div class="grid">
+<div><label>Market</label><select id="market"><option>Indian Stocks</option><option>Indian F&O</option><option>Forex</option><option>Crypto / BTCUSD</option><option>Commodities</option><option>Indices</option><option>Spot / Futures</option></select></div>
+<div><label>Direction</label><select id="side"><option value="long">BUY / LONG</option><option value="short">SELL / SHORT</option></select></div>
+<div><label>Currency</label><select id="currency"><option value="₹">INR ₹</option><option value="$">USD $</option><option value="€">EUR €</option></select></div>
+</div>
+<p class="note">Market selection live price किंवा broker charges आणत नाही. Contract multiplier आणि lot size verify करा.</p>
+</div>
+<div class="card">
+<h2>🎯 Entry • Stop Loss • Target</h2>
+<div class="grid">
+<div><label>Account Balance</label><input id="bal" type="number" value="10000" min="0"></div>
+<div><label>Risk (%)</label><input id="risk" type="number" value="1" min="0" max="100" step="any"></div>
+<div><label>Entry Price</label><input id="entry" type="number" value="100" step="any"></div>
+<div><label>Stop Loss</label><input id="sl" type="number" value="98" step="any"></div>
+<div><label>Target</label><input id="tp" type="number" value="104" step="any"></div>
+<div><label>Quantity</label><input id="qty" type="number" value="1" min="0" step="any"></div>
+<div><label>Contract Multiplier</label><input id="mult" type="number" value="1" min="0.000001" step="any"></div>
+<div><label>Total Estimated Costs</label><input id="cost" type="number" value="0" min="0" step="any"></div>
+</div>
+<button class="primary" onclick="tradeCalc()">CALCULATE TRADE</button>
+<div id="tradeOut" class="results"></div>
+<p id="tradeMsg" class="note"></p>
+</div>
+</section>
+
+<section class="page" id="size" hidden>
+<div class="card">
+<h2>📐 Position Size Calculator</h2>
+<div class="grid">
+<div><label>Account Balance</label><input id="sb" type="number" value="10000"></div>
+<div><label>Risk %</label><input id="sr" type="number" value="1"></div>
+<div><label>Entry</label><input id="se" type="number" value="500"></div>
+<div><label>Stop Loss</label><input id="ssl" type="number" value="495"></div>
+<div><label>Multiplier</label><input id="sm" type="number" value="1"></div>
+<div><label>Lot / Quantity Step</label><input id="step" type="number" value="1" min="0.000001"></div>
+</div>
+<button class="primary" onclick="sizeCalc()">CALCULATE SIZE</button>
+<div id="sizeOut" class="results"></div>
+<p class="note">Quantity risk estimate आहे. Slippage, fees आणि leverage मुळे actual risk बदलू शकतो.</p>
+</div>
+</section>
+
+<section class="page" id="rr" hidden>
+<div class="card">
+<h2>⚖️ Risk : Reward Calculator</h2>
+<div class="grid">
+<div><label>Entry</label><input id="re" type="number" value="100"></div>
+<div><label>Stop Loss</label><input id="rs" type="number" value="98"></div>
+<div><label>Reward Multiple (2 = 1:2)</label><input id="rm" type="number" value="2"></div>
+<div><label>Direction</label><select id="rd"><option value="long">BUY</option><option value="short">SELL</option></select></div>
+</div>
+<button class="primary" onclick="rrCalc()">CALCULATE TARGET</button>
+<div id="rrOut" class="results"></div>
+</div>
+</section>
+
+<section class="page" id="pnl" hidden>
+<div class="card">
+<h2>💹 Profit / Loss Calculator</h2>
+<div class="grid">
+<div><label>Entry Price</label><input id="pe" type="number" value="100"></div>
+<div><label>Exit Price</label><input id="px" type="number" value="105"></div>
+<div><label>Quantity</label><input id="pq" type="number" value="10"></div>
+<div><label>Multiplier</label><input id="pm" type="number" value="1"></div>
+<div><label>Costs</label><input id="pc" type="number" value="0"></div>
+<div><label>Direction</label><select id="pd"><option value="long">BUY</option><option value="short">SELL</option></select></div>
+</div>
+<button class="primary" onclick="pnlCalc()">CALCULATE P/L</button>
+<div id="pnlOut" class="results"></div>
+</div>
+</section>
+
+<section class="page" id="avg" hidden>
+<div class="card">
+<h2>🧺 Average Buy Price</h2>
+<div class="grid">
+<div><label>Buy 1 Price</label><input id="a1" type="number" value="100"></div>
+<div><label>Buy 1 Quantity</label><input id="q1" type="number" value="5"></div>
+<div><label>Buy 2 Price</label><input id="a2" type="number" value="90"></div>
+<div><label>Buy 2 Quantity</label><input id="q2" type="number" value="5"></div>
+</div>
+<button class="primary" onclick="avgCalc()">CALCULATE AVERAGE</button>
+<div id="avgOut" class="results"></div>
+</div>
+</section>
+
+<section class="page" id="math" hidden>
+<div class="card">
+<h2>🔢 Smart Math Calculator</h2>
+<div><label>Calculation Type</label><select id="mode" onchange="mathFields()"><option value="percent">Percentage of number</option><option value="change">Percentage change</option><option value="compound">Compound growth</option><option value="recover">Recovery after loss</option><option value="convert">Currency conversion</option></select></div>
+<div class="grid" id="mathInputs" style="margin-top:10px"></div>
+<button class="primary" onclick="mathCalc()">CALCULATE</button>
+<div id="mathOut" class="results"></div>
+</div>
+<div class="card">
+<h2>🧮 Basic Calculator</h2>
+<input id="display" placeholder="उदा. (250+50)*2" inputmode="decimal">
+<div class="keys">
+<button onclick="add('7')">7</button><button onclick="add('8')">8</button><button onclick="add('9')">9</button><button onclick="add('/')">÷</button>
+<button onclick="add('4')">4</button><button onclick="add('5')">5</button><button onclick="add('6')">6</button><button onclick="add('*')">×</button>
+<button onclick="add('1')">1</button><button onclick="add('2')">2</button><button onclick="add('3')">3</button><button onclick="add('-')">−</button>
+<button onclick="add('0')">0</button><button onclick="add('.')">.</button><button onclick="add('(')">(</button><button onclick="add(')')">)</button>
+<button onclick="add('+')">+</button><button onclick="backspace()">⌫</button><button onclick="clearBasic()">AC</button>
+</div>
+<button class="primary" onclick="basicCalc()">= CALCULATE</button>
+<div id="basicOut" class="big"></div>
+</div>
+</section>
+<footer>CREATE BY TRADER-$HIV<br>Educational calculator only • No profit guarantee</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const N=id=>Number($(id).value);
+const F=(x,c='')=>Number.isFinite(x)?c+x.toLocaleString('en-IN',{maximumFractionDigits:4}):'Invalid';
+function show(id,items){$(id).innerHTML=items.map(a=>'<div class="result"><span>'+a[0]+'</span><strong class="'+(a[2]||'')+'">'+a[1]+'</strong></div>').join('')}
+function valid(ids){return ids.every(id=>$(id).value.trim()!==''&&Number.isFinite(N(id)))}
+function error(id,msg){show(id,[['Check inputs',msg,'red']])}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(x=>x.hidden=x.id!==b.dataset.tab);});
+function tradeCalc(){
+let ids=['bal','risk','entry','sl','tp','qty','mult','cost'];
+if(!valid(ids))return error('tradeOut','Enter valid numbers.');
+let [b,r,e,s,t,q,m,c]=ids.map(N),long=$('side').value==='long',cur=$('currency').value;
+let rd=long?e-s:s-e,wd=long?t-e:e-t;
+if(b<0||r<0||r>100||e<=0||q<0||m<=0||c<0||rd<=0||wd<=0){$('tradeMsg').textContent='BUY: SL below entry and target above entry. SELL: opposite. Check inputs.';$('tradeOut').innerHTML='';return}
+let budget=b*r/100,risk=rd*q*m,reward=wd*q*m;
+show('tradeOut',[
+['Risk Budget',F(budget,cur),'red'],
+['Risk : Reward','1 : '+(wd/rd).toFixed(2),'cyan'],
+['Selected Quantity Risk',F(risk,cur),'red'],
+['Potential Net Profit',F(reward-c,cur),reward>=c?'green':'red'],
+['Potential Net Loss',F(risk+c,cur),'red'],
+['Position Value',F(e*q*m,cur),'cyan'],
+['Risk-budget Quantity',F(budget/(rd*m)),'cyan']
+]);
+$('tradeMsg').textContent='Estimates only. Slippage and charges can change results; no profit is guaranteed.';
+}
+function sizeCalc(){
+let ids=['sb','sr','se','ssl','sm','step'];if(!valid(ids))return error('sizeOut','Enter valid numbers.');
+let [b,r,e,s,m,st]=ids.map(N);
+if(b<0||r<0||r>100||e<=0||s<=0||e===s||m<=0||st<=0)return error('sizeOut','Check balance, risk, entry, SL and lot step.');
+let budget=b*r/100,raw=budget/(Math.abs(e-s)*m),q=Math.floor((raw+1e-10)/st)*st;
+show('sizeOut',[
+['Risk Budget',F(budget),'red'],['Theoretical Quantity',F(raw),'cyan'],
+['Rounded Quantity',F(q),'green'],['Estimated SL Loss',F(q*Math.abs(e-s)*m),'red'],
+['Position Value',F(q*e*m),'cyan']
+]);
+}
+function rrCalc(){
+let e=N('re'),s=N('rs'),r=N('rm'),long=$('rd').value==='long',d=long?e-s:s-e;
+if(!valid(['re','rs','rm'])||e<=0||d<=0||r<0)return error('rrOut','Check entry, SL and reward multiple.');
+show('rrOut',[['Risk / unit',F(d)],['Reward / unit',F(d*r),'green'],['Target Price',F(long?e+d*r:e-d*r),'cyan'],['Risk : Reward','1 : '+r.toFixed(2)]]);
+}
+function pnlCalc(){
+let ids=['pe','px','pq','pm','pc'];if(!valid(ids))return error('pnlOut','Enter valid numbers.');
+let [e,x,q,m,c]=ids.map(N);if(e<0||x<0||q<0||m<=0||c<0)return error('pnlOut','Check prices, quantity, multiplier and costs.');
+let gross=(x-e)*q*m*($('pd').value==='long'?1:-1),net=gross-c;
+show('pnlOut',[['Gross P/L',F(gross),gross>=0?'green':'red'],['Net P/L',F(net),net>=0?'green':'red'],['Return on Entry',F(e*q*m?gross/(e*q*m)*100:0)+'%'],['Break-even Exit',F(e+($('pd').value==='long'?1:-1)*(q*m?c/(q*m):0))]]);
+}
+function avgCalc(){
+let ids=['a1','q1','a2','q2'];if(!valid(ids))return error('avgOut','Enter valid numbers.');
+let [a,q,b,r]=ids.map(N);if(a<0||b<0||q<0||r<0||q+r===0)return error('avgOut','Total quantity must be above zero.');
+show('avgOut',[['Average Price',F((a*q+b*r)/(q+r)),'cyan'],['Total Quantity',F(q+r)],['Total Cost',F(a*q+b*r)]]);
+}
+function mathFields(){
+let m=$('mode').value,defs={
+percent:[['ma','Number','100'],['mb','Percentage (%)','15']],
+change:[['ma','Starting value','100'],['mb','Ending value','120']],
+compound:[['ma','Starting amount','10000'],['mb','Growth per period (%)','2'],['mc','Number of periods','12']],
+recover:[['ma','Loss (%)','20']],
+convert:[['ma','Amount','100'],['mb','Manual exchange rate','83']]
+};
+$('mathInputs').innerHTML=defs[m].map(x=>'<div><label>'+x[1]+'</label><input id="'+x[0]+'" type="number" value="'+x[2]+'" step="any"></div>').join('');
+}
+function mathCalc(){
+let mode=$('mode').value,a=N('ma'),b=$('mb')?N('mb'):0,c=$('mc')?N('mc'):0;
+if(!Number.isFinite(a)||(['percent','change','compound','convert'].includes(mode)&&!Number.isFinite(b)))return error('mathOut','Enter valid numbers.');
+let items=[];
+if(mode==='percent')items=[['Result',F(a*b/100),'cyan']];
+if(mode==='change')items=[['Absolute Change',F(b-a)],['Percentage Change',F(a?(b-a)/Math.abs(a)*100:0)+'%']];
+if(mode==='compound'){if(c<0||c>10000)return error('mathOut','Periods must be 0 to 10000.');let end=a*Math.pow(1+b/100,c);items=[['Final Amount',F(end),'cyan'],['Total Change',F(end-a)],['Total Growth',F(a?(end/a-1)*100:0)+'%']]}
+if(mode==='convert')items=[['Converted Amount',F(a*b),'cyan'],['Manual Rate',F(b)]];
+if(mode==='recover'){if(a<0||a>=100)return error('mathOut','Loss must be from 0% to below 100%.');items=[['Loss',F(a)+'%','red'],['Gain needed to recover',F(a/(100-a)*100)+'%','cyan']]}
+show('mathOut',items);
+}
+function add(v){$('display').value+ = v}
+function backspace(){$('display').value=$('display').value.slice(0,-1)}
+function clearBasic(){$('display').value='';$('basicOut').textContent=''}
+function basicCalc(){
+let s=$('display').value.trim();
+if(!s||!/^[0-9+\-*/().\s]+$/.test(s)){$('basicOut').textContent='Enter a valid expression';return}
+try{
+let t=s.match(/(?:\d+\.?\d*|\.\d+|[()+\-*/])/g)||[];
+if(t.join('')!==s.replace(/\s/g,''))throw 0;
+let i=0;
+function atom(){let v=t[i++];if(v==='('){let z=expr();if(t[i++]!==')')throw 0;return z}if(v==='+')return atom();if(v==='-')return -atom();if(v===undefined||!/^(\d+\.?\d*|\.\d+)$/.test(v))throw 0;return Number(v)}
+function term(){let v=atom();while(t[i]==='*'||t[i]==='/'){let op=t[i++],w=atom();v=op==='*'?v*w:v/w}return v}
+function expr(){let v=term();while(t[i]==='+'||t[i]==='-'){let op=t[i++],w=term();v=op==='+'?v+w:v-w}return v}
+let z=expr();if(i!==t.length||!Number.isFinite(z))throw 0;
+$('basicOut').textContent=z.toLocaleString('en-IN',{maximumFractionDigits:8});
+}catch(e){$('basicOut').textContent='Expression तपासा'}
+}
+mathFields();tradeCalc();sizeCalc();rrCalc();pnlCalc();avgCalc();mathCalc();
+</script>
+</body>
+</html>
